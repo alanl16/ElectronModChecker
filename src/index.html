@@ -1,0 +1,50 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Mod Checker</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'">
+<link rel="stylesheet" href="style.css"></head><body>
+<div id="welcome"><div class="card">
+  <img class="big" id="skin2" alt="" src="https://minotar.net/helm/AlanL14/128.png">
+  <h2>Mod Checker</h2>
+  <p class="sub">Check if all your mods are ready for a new Minecraft version.</p>
+  <ol>
+    <li><b>Add your mods.</b> Drag your <code>.jar</code> files onto the window, or click <b>Import mods…</b> / <b>Import folder…</b>.</li>
+    <li><b>Pick your loader and version.</b> Choose the loader (Fabric, Forge, NeoForge or Quilt) and the Minecraft version you want, like 26.3.</li>
+    <li><b>Read the colors.</b> <span class="c g">Green</span> = ready, <span class="c y">Yellow</span> = has an update for that version, <span class="c r">Red</span> = no build for that version yet.</li>
+    <li><b>Red mods:</b> click <b>Find alternatives</b> to see similar mods that already work on your version.</li>
+    <li><b>Test launch.</b> Click <b>▶ Test launch</b> to see what would happen if you started the game, and how to fix anything that would break.</li>
+    <li><b>Update.</b> Click <b>Update</b> on a yellow mod. Your old jar is saved in a <code>.old-mods</code> folder.</li>
+    <li><b>Optional:</b> paste a free CurseForge API key under the settings to also check CurseForge mods. Modrinth works without one.</li>
+  </ol>
+  <div class="credit"><img id="skin3" alt="" src="https://minotar.net/helm/AlanL14/64.png"><span>Created By AlanL14 With The Use Of Claude Sonnet 5.5</span></div>
+  <div class="actions"><label><input type="checkbox" id="hide"> Don't show this again</label><button id="go" class="primary">Get started</button></div>
+</div></div>
+<header>
+  <div class="top"><h1>⛏ Mod Checker</h1>
+    <div class="user"><button id="help" title="How to use">?</button><span>AlanL14</span><img id="skin" alt="" src="https://minotar.net/helm/AlanL14/64.png"></div></div>
+  <div class="bar">
+    <button id="import" class="primary">Import mods…</button>
+    <button id="importdir">Import folder…</button>
+    <button id="check" class="icon" title="Refresh"><span class="spin">↻</span></button>
+    <button id="launch">▶ Test launch</button>
+    <button id="clear">Clear list</button>
+    <span class="lbl">Loader:</span>
+    <img id="loaderIcon" class="lico" alt=""><select id="loader"><option value="Auto">Auto</option><option value="Fabric">Fabric</option><option value="Forge">Forge</option><option value="NeoForge">NeoForge</option><option value="Quilt">Quilt</option></select>
+    <input id="mc" size="8" list="mcs" placeholder="MC version">
+    <datalist id="mcs"><option>26.3</option><option>26.2</option><option>26.1</option><option>1.21.11</option><option>1.21.10</option><option>1.21.8</option><option>1.21.4</option><option>1.21.1</option><option>1.20.1</option></datalist>
+  </div>
+  <details><summary>CurseForge API key (optional)</summary>
+    <div class="keyrow"><input id="cfkey" type="password" placeholder="Free key from console.curseforge.com"><button id="testkey" class="icon" title="Test key">✔</button><span id="keyres"></span></div>
+  </details>
+  <div id="summary"></div>
+  <label class="flt"><input type="checkbox" id="onlyBad"> Only show problems</label>
+  <div id="status">Drag .jar files here, or click Import mods.</div>
+</header>
+<main id="list"></main>
+<div id="drop">Drop mods to import</div>
+<div id="launchModal" class="overlay"><div class="card">
+  <div id="lv" class="verdict"></div>
+  <p class="sub">This checks your mod files against your loader and version. It doesn't start Minecraft, so rare crashes can still happen.</p>
+  <div id="issues"></div>
+  <div class="actions"><span></span><button id="lclose" class="primary">Close</button></div>
+</div></div>
+<footer>Created By AlanL14 With The Use Of Claude Sonnet 5.5</footer>
+<script src="renderer.js"></script></body></html>
