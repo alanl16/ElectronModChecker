@@ -179,11 +179,17 @@ See [LICENSE](LICENSE) for the terms governing use of this project. Permission f
 
 请阅读 [LICENSE](LICENSE) 以了解本项目的使用条款。对于许可证限制的使用行为，必须事先获得版权所有者的许可
 
-## Contact
+## Contact（联系方式）
 
 - GitHub: [@AlanL16](https://github.com/AlanL16)
 - Discord Server: [Join the ElectronModChecker Discord Server](https://discord.gg/NVtpMN25gM)
+
+  Discord 服务器：[加入电子模组版本检查器 Discord 服务器](https://discord.gg/NVtpMN25gM)
+
 - Discord Username: `AlanL14`
+
+  Discord 用户名：`AlanL14`
+
 - QQ: `3643217944`
 
 For permission requests, contact me through GitHub, Discord, or QQ
