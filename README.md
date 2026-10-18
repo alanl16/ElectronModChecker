@@ -2,9 +2,9 @@
 
 电子模组版本检查器
 
-**ElectronMinecraftModChecker** is a Minecraft mod version checker that searches Modrinth and CurseForge to help you find mod releases for your desired Minecraft version
+**ElectronModChecker** is a Minecraft mod version checker that searches Modrinth and CurseForge to help you find mod releases for your desired Minecraft version
 
-**ElectronMinecraftModChecker** 是一款 Minecraft 模组版本检查工具，可搜索 Modrinth 和 CurseForge，帮助你查找适用于指定 Minecraft 版本的模组
+**电子模组版本检查器** 是一款 Minecraft 模组版本检查工具，可搜索 Modrinth 和 CurseForge，帮助你查找适用于指定 Minecraft 版本的模组
 
 Want to switch Minecraft versions without manually checking every mod? ElectronModChecker makes it easier to find available releases
 
@@ -64,17 +64,17 @@ Want to switch Minecraft versions without manually checking every mod? ElectronM
 
    双击 `start.command` 启动电子模组版本检查器
 
-**If macOS says `start.command` cannot be opened because Apple cannot verify it**
+If macOS says `start.command` cannot be opened because Apple cannot verify it, follow the steps below
 
-**如果 macOS 提示 Apple 无法验证 `start.command`，因此无法打开该文件**
+如果 macOS 提示 Apple 无法验证 `start.command`，因此无法打开该文件，请按照以下步骤操作
 
 1. Open System Settings → Privacy & Security
 
    打开系统设置 → 隐私与安全性
 
-2. Find the message about the blocked script
+2. Find the security message about the blocked script
 
-   找到有关已阻止脚本的提示
+   找到有关已阻止脚本的安全提示
 
 3. If the option is available, click Open Anyway and confirm
 
@@ -163,6 +163,10 @@ Linux 支持目前正在开发中
 
   部分模组可能只在其中一个平台上发布
 
+- Always download mods from trusted sources
+
+  请始终从可信来源下载模组
+
 ## Feedback & Contributions（反馈与贡献）
 
 Found a bug or have an idea for improvement? Open an issue on GitHub
@@ -171,9 +175,9 @@ Found a bug or have an idea for improvement? Open an issue on GitHub
 
 ## License（许可证）
 
-See [LICENSE](https://github.com/alanl16/ElectronMinecraftModChecker/blob/main/LICENSE) for the terms governing use of this project. Permission may be required before using, copying, modifying, or distributing it
+See [LICENSE](LICENSE) for the terms governing use of this project. Permission from the copyright holder is required for uses restricted by the license
 
-请阅读 [LICENSE](https://github.com/alanl16/ElectronMinecraftModChecker/blob/main/LICENSE) 以了解本项目的使用条款。在使用、复制、修改或分发本项目之前，可能需要获得许可
+请阅读 [LICENSE](LICENSE) 以了解本项目的使用条款。对于许可证限制的使用行为，必须事先获得版权所有者的许可
 
 ## Contact（联系方式）
 
