@@ -86,7 +86,7 @@ Alternatively, if you trust the source and have reviewed the script, you can lau
 
 1. Open Terminal
 
-   打开终端
+   打开t终端
 
 2. Type `cd `, including the space
 
@@ -179,12 +179,11 @@ See [LICENSE](LICENSE) for the terms governing use of this project. Permission f
 
 请阅读 [LICENSE](LICENSE) 以了解本项目的使用条款。对于许可证限制的使用行为，必须事先获得版权所有者的许可
 
-## Contact（联系方式）
+## Contact
 
 - GitHub: [@AlanL16](https://github.com/AlanL16)
-
-- Discord: `AlanL14`
-
+- Discord Server: [Join the ElectronModChecker Discord Server](https://discord.gg/NVtpMN25gM)
+- Discord Username: `AlanL14`
 - QQ: `3643217944`
 
 For permission requests, contact me through GitHub, Discord, or QQ
