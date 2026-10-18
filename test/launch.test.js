@@ -1,0 +1,31 @@
+const assert = require('assert');
+const { mcSatisfies } = require('../src/versions');
+const { analyze } = require('../src/launchtest');
+// range checks
+assert.strictEqual(mcSatisfies('~1.21.11', '1.21.11'), true);
+assert.strictEqual(mcSatisfies('~1.21.11', '26.3'), false);
+assert.strictEqual(mcSatisfies('>=1.21 <1.22', '1.21.11'), true);
+assert.strictEqual(mcSatisfies('>=1.21 <1.22', '26.3'), false);
+assert.strictEqual(mcSatisfies('>=1.21', '26.3'), true);
+assert.strictEqual(mcSatisfies('1.21.x', '1.21.4'), true);
+assert.strictEqual(mcSatisfies('1.21.x', '26.3'), false);
+assert.strictEqual(mcSatisfies('~26.3 || ~26.2', '26.3'), true);
+assert.strictEqual(mcSatisfies('[1.21.1,1.22)', '1.21.11'), true);
+assert.strictEqual(mcSatisfies('[1.21.1,1.22)', '26.3'), false);
+assert.strictEqual(mcSatisfies('[1.21,)', '26.3'), true);
+assert.strictEqual(mcSatisfies('1.21.11', '1.21.11'), true);
+assert.strictEqual(mcSatisfies(null, '26.3'), null);
+console.log('ranges OK');
+// scenarios
+const mk = (o) => Object.assign({ file: '/' + o.name, fileName: o.name + '.jar', loader: 'Fabric', deps: [], provides: [], nested: [], mcRange: null }, o);
+const fabApi = mk({ name: 'Fabric API', id: 'fabric-api', provides: ['fabric'], nested: ['fabric-resource-loader-v0'], mcRange: '>=26.3' });
+const good = mk({ name: 'Good', id: 'good', mcRange: '>=26.3', deps: [{ id: 'fabric-resource-loader-v0' }, { id: 'fabricloader' }] });
+let a = analyze([fabApi, good], {}, '26.3', 'Fabric'); assert.strictEqual(a.verdict, 'ok');
+const old = mk({ name: 'Old', id: 'old', mcRange: '~1.21.11', mcVersion: '1.21.11' });
+const needs = mk({ name: 'Needy', id: 'needy', mcRange: '>=26.3', deps: [{ id: 'fabric-api' }, { id: 'cloth-config' }] });
+const forge = mk({ name: 'Forgey', id: 'forgey', loader: 'Forge' });
+a = analyze([old, needs, forge], {}, '26.3', 'Fabric');
+console.log(a.headline); a.issues.forEach(i => console.log(' ', i.level, '|', i.mod, '|', i.title, '|', i.fix));
+assert.strictEqual(a.verdict, 'fail'); assert.ok(a.issues.length >= 4);
+a = analyze([mk({ name: 'A', id: 'dup' }), mk({ name: 'B', id: 'dup', file: '/b' })], {}, null, 'Fabric'); assert.ok(a.issues.some(i => /copies/.test(i.title)));
+console.log('launch OK');
