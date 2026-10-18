@@ -1,4 +1,5 @@
-// Dry-run of "what would happen if I launched": checks the mod files against the loader + Minecraft version.
+// Dry-run of "what would happen if I launched": checks mod files against loader, Minecraft version and Java.
+// Returns issue CODES + params; the window translates them.
 const { mcSatisfies } = require('./versions');
 
 const BUILTIN = new Set(['minecraft', 'java', 'fabricloader', 'fabric-loader', 'quilt_loader', 'quilt_base', 'forge', 'neoforge', 'javafml', 'lowcodefml', 'fml', 'mixin']);
@@ -10,63 +11,55 @@ function inferLoader(mods) {
   return Object.entries(c).sort((a, b) => b[1] - a[1]).map(x => x[0])[0] || null;
 }
 
-function analyze(mods, results, target, loaderSel) {
+// jv = { required: 21 | null, have: { major, path } | null }
+function analyze(mods, results, target, loaderSel, jv) {
   const issues = [];
-  const add = (level, mod, title, fix, link) => issues.push({ level, mod, title, fix, link: link || null });
-  if (!mods.length) return { verdict: 'empty', headline: 'Nothing to test', issues };
+  const add = (level, mod, code, p, link) => issues.push({ level, mod, code, p: p || {}, link: link || null });
+  if (!mods.length) return { verdict: 'empty', errors: 0, warns: 0, issues };
   const loader = loaderSel && loaderSel !== 'Auto' ? loaderSel : inferLoader(mods);
-  const isFabricFamily = l => l === 'Fabric' || l === 'Quilt';
+  const fam = l => l === 'Fabric' || l === 'Quilt';
 
-  // provided ids
-  const provided = new Set(BUILTIN);
-  const byId = {};
+  if (jv && jv.required) {
+    const link = `https://adoptium.net/temurin/releases/?version=${jv.required}`;
+    if (!jv.have) add('warn', 'Java', 'javaNone', { req: jv.required }, link);
+    else if (jv.have.major < jv.required) add('error', 'Java', 'java', { req: jv.required, have: jv.have.major }, link);
+  }
+
+  const provided = new Set(BUILTIN), byId = {};
   for (const m of mods) {
     for (const id of [m.id, ...(m.provides || []), ...(m.nested || [])]) if (id) provided.add(id);
     if (m.id) (byId[m.id] ||= []).push(m);
   }
-
-  // duplicates
-  for (const [id, list] of Object.entries(byId)) if (list.length > 1)
-    add('error', list[0].name, `${list.length} copies of the same mod`, `Delete all but the newest: ${list.map(x => x.fileName).join(', ')}. The game refuses to start with duplicates.`);
+  for (const list of Object.values(byId)) if (list.length > 1)
+    add('error', list[0].name, 'dup', { n: list.length, files: list.map(x => x.fileName).join(', ') });
 
   for (const m of mods) {
     const r = results && results[m.file];
-    // loader mismatch
-    if (m.loader === 'Unknown') {
-      add('warn', m.name, "Couldn't read this file as a mod", 'Check it really is a Fabric/Forge/NeoForge/Quilt mod. If it is a library or resource pack, it may not belong in this folder.');
-    } else if (loader && m.loader !== loader && !(loader === 'Quilt' && m.loader === 'Fabric')) {
-      add('error', m.name, `Built for ${m.loader}, but your loader is ${loader}`,
-        `Download the ${loader} version of this mod, or remove it. ${isFabricFamily(m.loader) !== isFabricFamily(loader) ? 'It will be ignored or crash the game.' : ''}`.trim(), search(m.name));
+    if (m.loader === 'Unknown') add('warn', m.name, 'unreadable');
+    else if (loader && m.loader !== loader && !(loader === 'Quilt' && m.loader === 'Fabric')) {
+      add('error', m.name, fam(m.loader) !== fam(loader) ? 'wrongLoaderX' : 'wrongLoader', { a: m.loader, b: loader }, search(m.name));
       continue;
     }
-    // Minecraft version
     if (target) {
       const sat = mcSatisfies(m.mcRange, target);
-      if (r && r.hasTarget && !r.isCurrent) {
-        add('error', m.name, `Your copy is outdated for ${target}`, `A ${target} build exists (${r.latestVersion}). Click Update on this mod.`);
-      } else if (r && !r.hasTarget) {
-        add('error', m.name, `No ${target} build exists yet`, `It only goes up to ${r.newestMc || 'an older version'}. Remove it, wait for the author to update it, or use "Find alternatives".`);
-      } else if (sat === false) {
-        add('error', m.name, `Built for ${m.mcVersion || 'another version'}, not ${target}`, 'Update it if a newer build exists (refresh to check), otherwise remove it or find an alternative.');
-      } else if (sat === null && !r) {
-        add('warn', m.name, `Couldn't confirm it works on ${target}`, 'Press refresh to check online. If it isn\'t listed anywhere, test it in game.');
-      }
+      if (r && r.hasTarget && !r.isCurrent) add('error', m.name, 'outdated', { v: target, ver: r.latestVersion });
+      else if (r && !r.hasTarget) add('error', m.name, 'stuck', { v: target, newest: r.newestMc || '' });
+      else if (sat === false) add('error', m.name, 'mcMismatch', { v: target, a: m.mcVersion || '' });
+      else if (sat === null && !r) add('warn', m.name, 'unknownMc', { v: target });
     }
-    // required dependencies
     for (const d of m.deps || []) {
       if (BUILTIN.has(d.id) || provided.has(d.id)) continue;
       const fabApi = /^fabric(-api)?$|^fabric-.*-v\d+$|^fabric-api-/.test(d.id);
-      add('error', m.name, `Needs "${fabApi ? 'Fabric API' : d.id}" which isn't installed`,
-        `Install ${fabApi ? 'Fabric API' : d.id}${d.range ? ' (' + d.range + ')' : ''} and import it too.`, fabApi ? 'https://modrinth.com/mod/fabric-api' : search(d.id));
+      add('error', m.name, 'needs', { d: fabApi ? 'Fabric API' : d.id, r: d.range ? ' (' + d.range + ')' : '' }, fabApi ? 'https://modrinth.com/mod/fabric-api' : search(d.id));
     }
   }
-  // collapse repeats of the same missing dependency
-  const seen = new Set(), out = [];
-  for (const i of issues) { const k = i.title + '|' + (i.title.startsWith('Needs') ? '' : i.mod); if (i.title.startsWith('Needs') && seen.has(k)) { const f = out.find(o => o.title === i.title); if (f && !f.mod.includes(i.mod)) f.mod += ', ' + i.mod; continue; } seen.add(k); out.push(i); }
-  const errors = out.filter(i => i.level === 'error').length, warns = out.length - errors;
-  const verdict = errors ? 'fail' : warns ? 'warn' : 'ok';
-  const headline = errors ? `Would fail to launch — ${errors} problem${errors > 1 ? 's' : ''} to fix` : warns ? `Would probably launch — ${warns} warning${warns > 1 ? 's' : ''}` : `Should launch fine${target ? ' on ' + target : ''}`;
+  const out = [];
+  for (const i of issues) {
+    if (i.code === 'needs') { const f = out.find(o => o.code === 'needs' && o.p.d === i.p.d); if (f) { if (!f.mod.split(', ').includes(i.mod)) f.mod += ', ' + i.mod; continue; } }
+    out.push(i);
+  }
   out.sort((a, b) => (a.level === 'error' ? 0 : 1) - (b.level === 'error' ? 0 : 1));
-  return { verdict, headline, issues: out, loader, target };
+  const errors = out.filter(i => i.level === 'error').length, warns = out.length - errors;
+  return { verdict: errors ? 'fail' : warns ? 'warn' : 'ok', errors, warns, issues: out, loader, target };
 }
 module.exports = { analyze };

@@ -1,8 +1,9 @@
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path'), fs = require('fs');
-const { parseJar } = require('./jar');
+const { parseJarAsync, fingerprintFile } = require('./jar');
 const { checkModrinth, findSimilar } = require('./modrinth');
 const { analyze } = require('./launchtest');
+const java = require('./java');
 const { checkCurseForge } = require('./curseforge');
 
 const cfgFile = () => path.join(app.getPath('userData'), 'config.json');
@@ -35,21 +36,38 @@ ipcMain.handle('files:pick', async (_, folder) => {
   const r = await dialog.showOpenDialog(folder ? { properties: ['openDirectory'] } : { properties: ['openFile', 'multiSelections'], filters: [{ name: 'Mods', extensions: ['jar'] }] });
   return r.canceled ? [] : r.filePaths;
 });
-ipcMain.handle('mods:parse', (_, paths) => {
+// expand files/folders into a flat list of .jar paths (cheap)
+ipcMain.handle('mods:expand', (_, paths) => {
   const files = [];
   for (const p of paths) {
     try {
-      if (fs.statSync(p).isDirectory()) for (const f of fs.readdirSync(p)) { if (f.endsWith('.jar')) files.push(path.join(p, f)); }
+      if (fs.statSync(p).isDirectory()) { for (const f of fs.readdirSync(p)) if (f.endsWith('.jar')) files.push(path.join(p, f)); }
       else if (p.endsWith('.jar')) files.push(p);
     } catch {}
   }
-  return files.map(f => { try { return parseJar(f); } catch (e) { return { file: f, fileName: path.basename(f), name: path.basename(f), loader: 'Unknown', sha1: '', fingerprint: 0, error: e.message }; } });
+  return files;
+});
+// Parsed-jar cache (path + size + modified time), so re-opening a 900-mod list is instant.
+let pcache = null, pTimer = null;
+const pcFile = () => path.join(app.getPath('userData'), 'parse-cache.json');
+const pc = () => { if (!pcache) { try { pcache = JSON.parse(fs.readFileSync(pcFile(), 'utf8')); } catch { pcache = {}; } } return pcache; };
+const pcSave = () => { clearTimeout(pTimer); pTimer = setTimeout(() => { try { fs.writeFileSync(pcFile(), JSON.stringify(pc())); } catch {} }, 2000); };
+
+// parse jars one at a time (the window asks for them one by one and shows each as it arrives)
+ipcMain.handle('mods:parse', async (_, files) => {
+  const out = [];
+  for (const f of files) {
+    try {
+      const st = await fs.promises.stat(f), sig = st.size + '|' + st.mtimeMs, hit = pc()[f];
+      if (hit && hit.sig === sig) { out.push(hit.info); continue; }
+      const info = await parseJarAsync(f);
+      pc()[f] = { sig, info }; pcSave(); out.push(info);
+    } catch (e) { out.push({ file: f, fileName: path.basename(f), name: path.basename(f), loader: 'Unknown', sha1: '', deps: [], provides: [], nested: [], error: e.message }); }
+  }
+  return out;
 });
 ipcMain.handle('dir:default', () => defaultModsDir());
-ipcMain.handle('mods:scan', (_, dir) => {
-  if (!fs.existsSync(dir)) throw new Error('Folder not found: ' + dir);
-  return fs.readdirSync(dir).filter(f => f.endsWith('.jar')).map(f => parseJar(path.join(dir, f)));
-});
+
 
 ipcMain.handle('mods:check', async (_, mods, cfKey, mc, loader) => {
   if (loader && loader !== 'Auto') mods = mods.map(x => ({ ...x, loader }));
@@ -60,8 +78,10 @@ ipcMain.handle('mods:check', async (_, mods, cfKey, mc, loader) => {
     for (const x of mods) if (m.has(x.sha1)) result[x.file] = m.get(x.sha1);
   } catch (e) { result.__modrinthError = e.message; }
   try {
-    const c = await checkCurseForge(mods.map(x => ({ fingerprint: x.fingerprint, loader: x.loader })), cfKey, mc);
-    for (const x of mods) if (!result[x.file] && c.has(x.fingerprint)) result[x.file] = c.get(x.fingerprint);
+    const fps = [];
+    if (cfKey) for (const x of mods) fps.push({ file: x.file, loader: x.loader, fingerprint: await fingerprintFile(x.file).catch(() => 0) });
+    const c = await checkCurseForge(fps, cfKey, mc);
+    for (const x of fps) if (!result[x.file] && c.has(x.fingerprint)) result[x.file] = c.get(x.fingerprint);
   } catch (e) { result.__curseError = e.message; }
   return result;
 });
@@ -87,16 +107,32 @@ ipcMain.handle('mc:versions', async () => {
 });
 
 ipcMain.handle('cf:test', async (_, key) => {
-  if (!key) return { ok: false, msg: 'Paste a key first' };
+  if (!key) return { ok: false, code: 'empty' };
   try {
     const r = await fetch('https://api.curseforge.com/v1/games/432', { headers: { 'x-api-key': key, Accept: 'application/json' }, signal: AbortSignal.timeout(10000) });
-    if (r.ok) return { ok: true, msg: 'Key works' };
-    if (r.status === 401 || r.status === 403) return { ok: false, msg: 'Key rejected (invalid)' };
-    return { ok: false, msg: 'CurseForge error ' + r.status };
-  } catch (e) { return { ok: false, msg: 'Could not reach CurseForge' }; }
+    if (r.ok) return { ok: true, code: 'ok' };
+    if (r.status === 401 || r.status === 403) return { ok: false, code: 'rejected' };
+    return { ok: false, code: 'err', status: r.status };
+  } catch (e) { return { ok: false, code: 'unreach' }; }
 });
 
 ipcMain.handle('mods:similar', async (_, info, target, loader) => {
   try { return { items: await findSimilar(info, target, loader) }; } catch (e) { return { error: e.message }; }
 });
-ipcMain.handle('launch:test', (_, mods, results, target, loader) => analyze(mods, results, target, loader));
+async function effectiveJava(target) {
+  const cfg = loadCfg(), list = await java.detect(), req = await java.required(target);
+  let have = null;
+  if (cfg.java) have = list.find(j => j.path === cfg.java) || await java.probe(cfg.java);
+  if (!have) have = java.pick(list, req);
+  return { have, required: req, custom: !!cfg.java };
+}
+ipcMain.handle('java:detect', (_, force) => java.detect(force));
+ipcMain.handle('java:effective', (_, target) => effectiveJava(target));
+ipcMain.handle('java:browse', async () => {
+  const r = await dialog.showOpenDialog({ properties: ['openFile'], filters: process.platform === 'win32' ? [{ name: 'java.exe', extensions: ['exe'] }] : [] });
+  return r.canceled ? null : java.probe(r.filePaths[0]);
+});
+ipcMain.handle('launch:test', async (_, mods, results, target, loader) => {
+  const j = await effectiveJava(target);
+  return analyze(mods, results, target, loader, { required: j.required, have: j.have });
+});

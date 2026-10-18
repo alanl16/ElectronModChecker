@@ -1,50 +1,75 @@
 <!doctype html><html><head><meta charset="utf-8"><title>Mod Checker</title>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'">
 <link rel="stylesheet" href="style.css"></head><body>
-<div id="welcome"><div class="card">
+
+<div id="welcome" class="overlay"><div class="card">
   <img class="big" id="skin2" alt="" src="https://minotar.net/helm/AlanL14/128.png">
   <h2>Mod Checker</h2>
-  <p class="sub">Check if all your mods are ready for a new Minecraft version.</p>
+  <p class="sub" data-i18n="w.sub"></p>
   <ol>
-    <li><b>Add your mods.</b> Drag your <code>.jar</code> files onto the window, or click <b>Import mods…</b> / <b>Import folder…</b>.</li>
-    <li><b>Pick your loader and version.</b> Choose the loader (Fabric, Forge, NeoForge or Quilt) and the Minecraft version you want, like 26.3.</li>
-    <li><b>Read the colors.</b> <span class="c g">Green</span> = ready, <span class="c y">Yellow</span> = has an update for that version, <span class="c r">Red</span> = no build for that version yet.</li>
-    <li><b>Red mods:</b> click <b>Find alternatives</b> to see similar mods that already work on your version.</li>
-    <li><b>Test launch.</b> Click <b>▶ Test launch</b> to see what would happen if you started the game, and how to fix anything that would break.</li>
-    <li><b>Update.</b> Click <b>Update</b> on a yellow mod. Your old jar is saved in a <code>.old-mods</code> folder.</li>
-    <li><b>Optional:</b> paste a free CurseForge API key under the settings to also check CurseForge mods. Modrinth works without one.</li>
+    <li data-i18n-html="w.1"></li><li data-i18n-html="w.2"></li><li data-i18n-html="w.3"></li><li data-i18n-html="w.4"></li>
+    <li data-i18n-html="w.5"></li><li data-i18n-html="w.6"></li><li data-i18n-html="w.7"></li><li data-i18n-html="w.8"></li>
   </ol>
+  <div class="links">
+    <button id="discord" class="link discord">💬 <span data-i18n="info.discord"></span></button>
+    <button id="github" class="link">🐙 <span data-i18n="info.github"></span></button>
+  </div>
+  <p class="fb" data-i18n="info.feedback"></p>
   <div class="credit"><img id="skin3" alt="" src="https://minotar.net/helm/AlanL14/64.png"><span>Created By AlanL14 With The Use Of Claude Sonnet 5.5</span></div>
-  <div class="actions"><label><input type="checkbox" id="hide"> Don't show this again</label><button id="go" class="primary">Get started</button></div>
+  <div class="actions"><label><input type="checkbox" id="hide"> <span data-i18n="w.hide"></span></label><button id="go" class="primary" data-i18n="w.go"></button></div>
 </div></div>
+
 <header>
   <div class="top"><h1>⛏ Mod Checker</h1>
-    <div class="user"><button id="help" title="How to use">?</button><span>AlanL14</span><img id="skin" alt="" src="https://minotar.net/helm/AlanL14/64.png"></div></div>
+    <div class="user"><button id="help" class="round" data-i18n-title="tip.help">?</button><button id="gear" class="round" data-i18n-title="tip.settings">⚙</button><span>AlanL14</span><img id="skin" alt="" src="https://minotar.net/helm/AlanL14/64.png"></div></div>
   <div class="bar">
-    <button id="import" class="primary">Import mods…</button>
-    <button id="importdir">Import folder…</button>
-    <button id="check" class="icon" title="Refresh"><span class="spin">↻</span></button>
-    <button id="launch">▶ Test launch</button>
-    <button id="clear">Clear list</button>
-    <span class="lbl">Loader:</span>
-    <img id="loaderIcon" class="lico" alt=""><select id="loader"><option value="Auto">Auto</option><option value="Fabric">Fabric</option><option value="Forge">Forge</option><option value="NeoForge">NeoForge</option><option value="Quilt">Quilt</option></select>
-    <input id="mc" size="8" list="mcs" placeholder="MC version">
+    <button id="import" class="primary" data-i18n="btn.import"></button>
+    <button id="importdir" data-i18n="btn.importDir"></button>
+    <button id="check" class="icon" data-i18n-title="tip.refresh"><span class="spin">↻</span></button>
+    <button id="launch" data-i18n="btn.testLaunch"></button>
+    <button id="clear" data-i18n="btn.clear"></button>
+    <span class="lbl" data-i18n="lbl.loader"></span>
+    <img id="loaderIcon" class="lico" alt=""><select id="loader"><option value="Auto" data-i18n="loader.auto"></option><option value="Fabric">Fabric</option><option value="Forge">Forge</option><option value="NeoForge">NeoForge</option><option value="Quilt">Quilt</option></select>
+    <input id="mc" size="8" list="mcs" data-i18n-ph="ph.mc">
     <datalist id="mcs"><option>26.3</option><option>26.2</option><option>26.1</option><option>1.21.11</option><option>1.21.10</option><option>1.21.8</option><option>1.21.4</option><option>1.21.1</option><option>1.20.1</option></datalist>
   </div>
-  <details><summary>CurseForge API key (optional)</summary>
-    <div class="keyrow"><input id="cfkey" type="password" placeholder="Free key from console.curseforge.com"><button id="testkey" class="icon" title="Test key">✔</button><span id="keyres"></span></div>
+  <details><summary data-i18n="cf.summary"></summary>
+    <div class="keyrow"><input id="cfkey" type="password" data-i18n-ph="cf.ph"><button id="testkey" class="icon" data-i18n-title="tip.testKey">✔</button><span id="keyres"></span></div>
   </details>
   <div id="summary"></div>
-  <label class="flt"><input type="checkbox" id="onlyBad"> Only show problems</label>
-  <div id="status">Drag .jar files here, or click Import mods.</div>
+  <label class="flt"><input type="checkbox" id="onlyBad"> <span data-i18n="flt.onlyBad"></span></label>
+  <div id="status"></div>
+  <div id="prog"><div></div></div>
 </header>
 <main id="list"></main>
-<div id="drop">Drop mods to import</div>
+<div id="drop" data-i18n="drop"></div>
+
 <div id="launchModal" class="overlay"><div class="card">
   <div id="lv" class="verdict"></div>
-  <p class="sub">This checks your mod files against your loader and version. It doesn't start Minecraft, so rare crashes can still happen.</p>
+  <p class="sub" data-i18n="l.note"></p>
   <div id="issues"></div>
-  <div class="actions"><span></span><button id="lclose" class="primary">Close</button></div>
+  <div class="actions"><span></span><button id="lclose" class="primary" data-i18n="l.close"></button></div>
 </div></div>
+
+<div id="clModal" class="overlay"><div class="card narrow">
+  <div class="verdict fail">⚠️ <span data-i18n="cl.title"></span></div>
+  <p class="sub" id="clBody"></p>
+  <div class="actions"><button id="clNo" class="primary" data-i18n="cl.cancel"></button><button id="clYes" class="danger" disabled></button></div>
+</div></div>
+
+<div id="settings" class="overlay"><div class="card">
+  <h2 data-i18n="set.title"></h2>
+  <div class="field"><label for="lang" data-i18n="set.lang"></label><select id="lang"></select></div>
+  <div class="field"><label for="javaSel" data-i18n="set.java"></label>
+    <div class="row"><select id="javaSel"></select><button id="javaBrowse" data-i18n="set.browse"></button><button id="javaDetect" class="icon" data-i18n-title="set.detect">↻</button></div>
+    <div id="javaStatus" class="jstat"></div><div id="javaPath" class="jpath"></div></div>
+  <div class="field two">
+    <div><label for="mem" data-i18n="set.mem"></label><input id="mem" type="number" min="512" step="512"></div>
+    <div><label for="jvmArgs" data-i18n="set.args"></label><input id="jvmArgs" placeholder="-XX:+UseG1GC"></div>
+  </div>
+  <p class="sub small" data-i18n="set.note"></p>
+  <div class="actions"><span></span><button id="setClose" class="primary" data-i18n="set.close"></button></div>
+</div></div>
+
 <footer>Created By AlanL14 With The Use Of Claude Sonnet 5.5</footer>
-<script src="renderer.js"></script></body></html>
+<script src="i18n.js"></script><script src="renderer.js"></script></body></html>

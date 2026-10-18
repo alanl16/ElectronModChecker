@@ -6,21 +6,23 @@ const fs = require('fs');
 
 function sha1(buf) { return crypto.createHash('sha1').update(buf).digest('hex'); }
 
-// CurseForge fingerprint: MurmurHash2 (seed 1) over bytes minus whitespace (9,10,13,32)
+// CurseForge fingerprint: MurmurHash2 (seed 1) over the file's bytes minus whitespace (9,10,13,32).
+// Works on a typed array (no per-byte JS array), so even 100MB+ jars are fast and use little memory.
 function curseFingerprint(buf) {
-  const data = [];
-  for (const b of buf) if (b !== 9 && b !== 10 && b !== 13 && b !== 32) data.push(b);
-  const m = 0x5bd1e995, len = data.length;
+  const n = buf.length, d = Buffer.allocUnsafe(n);
+  let len = 0;
+  for (let i = 0; i < n; i++) { const b = buf[i]; if (b !== 9 && b !== 10 && b !== 13 && b !== 32) d[len++] = b; }
+  const m = 0x5bd1e995;
   let h = (1 ^ len) >>> 0, i = 0;
   for (; i + 4 <= len; i += 4) {
-    let k = (data[i] | (data[i + 1] << 8) | (data[i + 2] << 16) | (data[i + 3] << 24)) >>> 0;
+    let k = (d[i] | (d[i + 1] << 8) | (d[i + 2] << 16) | (d[i + 3] << 24)) >>> 0;
     k = Math.imul(k, m) >>> 0; k ^= k >>> 24; k = Math.imul(k, m) >>> 0;
     h = Math.imul(h, m) >>> 0; h = (h ^ k) >>> 0;
   }
   switch (len - i) {
-    case 3: h ^= data[i + 2] << 16;
-    case 2: h ^= data[i + 1] << 8;
-    case 1: h ^= data[i]; h = Math.imul(h, m) >>> 0;
+    case 3: h ^= d[i + 2] << 16;
+    case 2: h ^= d[i + 1] << 8;
+    case 1: h ^= d[i]; h = Math.imul(h, m) >>> 0;
   }
   h ^= h >>> 13; h = Math.imul(h, m) >>> 0; h ^= h >>> 15;
   return h >>> 0;
@@ -45,11 +47,10 @@ function rangeStr(r) {
   return typeof r === 'string' ? r : null;
 }
 
-function parseJar(file) {
-  const buf = fs.readFileSync(file);
+function parseBuffer(file, buf) {
   const info = {
     file, fileName: require('path').basename(file),
-    sha1: sha1(buf), fingerprint: curseFingerprint(buf),
+    sha1: sha1(buf),
     name: null, version: null, loader: 'Unknown', mcVersion: null, icon: null, id: null,
     mcRange: null, deps: [], provides: [], nested: [],
   };
@@ -116,4 +117,10 @@ function parseJar(file) {
   return info;
 }
 
-module.exports = { parseJar, sha1, curseFingerprint };
+const parseJar = file => parseBuffer(file, fs.readFileSync(file));
+const tick = () => new Promise(r => setImmediate(r));
+// async version: reads without blocking, and yields so the app stays responsive between files
+async function parseJarAsync(file) { const buf = await fs.promises.readFile(file); await tick(); return parseBuffer(file, buf); }
+async function fingerprintFile(file) { const buf = await fs.promises.readFile(file); await tick(); return curseFingerprint(buf); }
+
+module.exports = { parseJar, parseJarAsync, fingerprintFile, sha1, curseFingerprint };

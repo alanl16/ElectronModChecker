@@ -30,8 +30,7 @@ select{background:#22252d;color:inherit;border:1px solid #333845;border-radius:6
 .user{display:flex;align-items:center;gap:10px;font-weight:600}.user img{width:36px;height:36px;border-radius:6px;image-rendering:pixelated;background:#2a2d36}
 footer{text-align:center;color:#6b7180;font-size:12px;padding:24px 0 16px}
 
-#welcome{position:fixed;inset:0;background:#0d0e12f2;display:none;place-items:center;z-index:20;overflow:auto}
-#welcome.show{display:grid}.card{width:min(560px,92vw);background:#1d2027;border:1px solid #2a2d36;border-radius:14px;padding:26px 28px;margin:20px}
+.card{width:min(560px,92vw);background:#1d2027;border:1px solid #2a2d36;border-radius:14px;padding:26px 28px;margin:20px}
 .card h2{margin:10px 0 2px;font-size:22px}.sub{color:#9aa0ae;margin:0 0 16px}.big{width:64px;height:64px;border-radius:10px;image-rendering:pixelated;background:#2a2d36;float:right}
 .card ol{padding-left:20px;line-height:1.55;margin:0 0 18px}.card li{margin-bottom:8px}code{background:#2a2d36;padding:1px 6px;border-radius:4px}
 .c{font-weight:700}.c.g{color:#5fe39a}.c.y{color:#ffd166}.c.r{color:#ff6b6b}
@@ -61,3 +60,17 @@ button.icon{width:36px;padding:6px 0;font-size:18px;line-height:1}.keyrow{displa
 .li{width:14px;height:14px;vertical-align:-2px;margin-right:4px;image-rendering:pixelated;border-radius:3px}.lico{width:26px;height:26px;border-radius:5px;image-rendering:pixelated;vertical-align:middle}.lico[src='']{display:none}
 
 .tag img.li{width:16px;height:16px;border-radius:3px;background:none;vertical-align:-3px;margin-right:5px}
+
+.round,#help,#gear{width:30px;height:30px;padding:0;border-radius:50%}.user{gap:8px}
+.card.narrow{width:min(440px,92vw)}.danger{background:#e5484d;color:#fff;border:0;font-weight:600;padding:9px 18px}.danger:disabled{background:#4a2326;color:#b9898c;opacity:1;cursor:not-allowed}
+.links{display:flex;gap:8px;margin:0 0 6px}.link{padding:8px 14px}.link.discord{background:#5865f2;border:0;color:#fff;font-weight:600}.link.discord:hover{background:#6b77f5}
+.fb{color:#9aa0ae;font-size:12.5px;margin:4px 0 14px}
+.field{margin-top:14px}.field label{display:block;color:#9aa0ae;font-size:12.5px;margin-bottom:5px}.field select,.field input{width:100%}
+.field .row{display:flex;gap:8px}.field .row select{flex:1}.field.two{display:grid;grid-template-columns:1fr 1.4fr;gap:12px}
+.jstat{margin-top:7px;font-size:13px}.jstat.ok{color:#5fe39a}.jstat.bad{color:#ff8a8a}.jpath{color:#6b7180;font-size:11.5px;margin-top:2px;word-break:break-all}.sub.small{font-size:12px;margin-top:14px}
+
+#prog{display:none;height:3px;background:#2a2d36;border-radius:3px;margin-top:8px;overflow:hidden}#prog div{height:100%;width:0;background:#1bd96a;transition:width .15s}
+.mod{content-visibility:auto;contain-intrinsic-size:auto 76px}
+
+.lico:not([src]){display:none}
+.jstat.ok,.verdict.ok{background:none}

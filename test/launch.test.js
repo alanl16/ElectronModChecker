@@ -25,7 +25,11 @@ const old = mk({ name: 'Old', id: 'old', mcRange: '~1.21.11', mcVersion: '1.21.1
 const needs = mk({ name: 'Needy', id: 'needy', mcRange: '>=26.3', deps: [{ id: 'fabric-api' }, { id: 'cloth-config' }] });
 const forge = mk({ name: 'Forgey', id: 'forgey', loader: 'Forge' });
 a = analyze([old, needs, forge], {}, '26.3', 'Fabric');
-console.log(a.headline); a.issues.forEach(i => console.log(' ', i.level, '|', i.mod, '|', i.title, '|', i.fix));
+a.issues.forEach(i => console.log(' ', i.level, '|', i.mod, '|', i.code, JSON.stringify(i.p)));
 assert.strictEqual(a.verdict, 'fail'); assert.ok(a.issues.length >= 4);
-a = analyze([mk({ name: 'A', id: 'dup' }), mk({ name: 'B', id: 'dup', file: '/b' })], {}, null, 'Fabric'); assert.ok(a.issues.some(i => /copies/.test(i.title)));
+a = analyze([mk({ name: 'A', id: 'dup' }), mk({ name: 'B', id: 'dup', file: '/b' })], {}, null, 'Fabric'); assert.ok(a.issues.some(i => i.code === 'dup'));
+// java check
+a = analyze([fabApi, good], {}, '26.3', 'Fabric', { required: 25, have: { major: 21 } }); assert.ok(a.issues.some(i => i.code === 'java' && i.p.req === 25 && i.p.have === 21)); assert.strictEqual(a.verdict, 'fail');
+a = analyze([fabApi, good], {}, '26.3', 'Fabric', { required: 21, have: { major: 25 } }); assert.strictEqual(a.verdict, 'ok');
+a = analyze([fabApi, good], {}, '26.3', 'Fabric', { required: 25, have: null }); assert.strictEqual(a.verdict, 'warn');
 console.log('launch OK');
