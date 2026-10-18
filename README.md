@@ -38,6 +38,10 @@ Want to switch Minecraft versions without manually checking every mod? ElectronM
 
   **Windows** — 支持 Windows 系统
 
+- **Linux** — Not Supported(Developing)
+
+  **Linux** — 不支持（开发中）
+
 ## Installation and Setup（安装与设置）
 
 ### macOS
