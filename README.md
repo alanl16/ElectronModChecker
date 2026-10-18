@@ -2,9 +2,9 @@
 
 电子模组版本检查器
 
-ElectronModChecker is a Minecraft mod version checker that searches Modrinth and CurseForge to help you find mod releases for your desired Minecraft version
+**ElectronMinecraftModChecker** is a Minecraft mod version checker that searches Modrinth and CurseForge to help you find mod releases for your desired Minecraft version
 
-电子模组版本检查器是一款 Minecraft 模组版本检查工具，可搜索 Modrinth 和 CurseForge，帮助你查找适用于指定 Minecraft 版本的模组
+**ElectronMinecraftModChecker** 是一款 Minecraft 模组版本检查工具，可搜索 Modrinth 和 CurseForge，帮助你查找适用于指定 Minecraft 版本的模组
 
 Want to switch Minecraft versions without manually checking every mod? ElectronModChecker makes it easier to find available releases
 
@@ -12,95 +12,89 @@ Want to switch Minecraft versions without manually checking every mod? ElectronM
 
 ## Features（功能）
 
-- **Multi-platform search** — Search mods across Modrinth and CurseForge
+- Search mods across Modrinth and CurseForge
 
-  **多平台搜索** — 在 Modrinth 和 CurseForge 上搜索模组
+  在 Modrinth 和 CurseForge 上搜索模组
 
-- **Version compatibility** — Check whether mods have releases for your desired Minecraft version
+- Check for releases targeting your desired Minecraft version
 
-  **版本兼容性** — 检查模组是否有适用于指定 Minecraft 版本的发布版本
+  检查是否有适用于指定 Minecraft 版本的模组发布版本
 
-- **Version switching** — Find available releases for newer or older Minecraft versions
+- Find available releases for newer or older Minecraft versions
 
-  **版本切换** — 查找适用于较新或较旧 Minecraft 版本的模组
+  查找适用于较新或较旧 Minecraft 版本的模组发布版本
 
-- **Time-saving** — Reduce the hassle of manually checking mod compatibility
+- Simplify the process of checking mod version compatibility
 
-  **节省时间** — 减少手动检查模组兼容性的麻烦
+  简化模组版本兼容性的检查流程
 
 ## Supported Operating Systems（支持的操作系统）
 
-- **macOS** — Supported
+- macOS — Supported
 
-  **macOS** — 支持 macOS 系统
+  macOS — 已支持
 
-- **Windows** — Supported
+- Windows — Supported
 
-  **Windows** — 支持 Windows 系统
+  Windows — 已支持
 
-- **Linux** — Not Supported(Developing)
+- Linux — In development
 
-  **Linux** — 不支持（开发中）
+  Linux — 正在开发中
 
-## Installation and Setup（安装与设置）
+## Installation & Setup（安装与设置）
 
 ### macOS
 
 ### macOS 系统
 
-1. Download the project ZIP from the [GitHub repository](../../archive/refs/heads/main.zip)
+1. Download the project ZIP from the [GitHub repository](https://github.com/alanl16/ElectronMinecraftModChecker/archive/refs/heads/main.zip)
 
-   从 [GitHub 仓库](../../archive/refs/heads/main.zip) 下载项目 ZIP 压缩包
+   从 [GitHub 仓库](https://github.com/alanl16/ElectronMinecraftModChecker/archive/refs/heads/main.zip) 下载项目 ZIP 压缩包
 
 2. Extract the ZIP file
 
    解压 ZIP 文件
 
-3. Open the extracted project folder
+3. Open the extracted folder
 
-   打开解压后的项目文件夹
+   打开解压后的文件夹
 
 4. Double-click `start.command` to launch ElectronModChecker
 
    双击 `start.command` 启动电子模组版本检查器
 
-#### If macOS blocks `start.command`（如果 macOS 阻止运行 `start.command`）
+**If macOS says `start.command` cannot be opened because Apple cannot verify it**
 
-If macOS says the file cannot be opened because Apple cannot verify it, make sure you trust the project and review the script before proceeding
-
-如果 macOS 提示 Apple 无法验证该文件，因此无法打开，请先确认你信任此项目，并在继续操作前检查脚本内容
-
-Method 1: Use Privacy & Security
-
-方法一：使用隐私与安全性设置
+**如果 macOS 提示 Apple 无法验证 `start.command`，因此无法打开该文件**
 
 1. Open System Settings → Privacy & Security
 
    打开系统设置 → 隐私与安全性
 
-2. Find the security message about the blocked script
+2. Find the message about the blocked script
 
-   找到有关已阻止脚本的安全提示
+   找到有关已阻止脚本的提示
 
-3. If an Open Anyway option is available, select it and confirm
+3. If the option is available, click Open Anyway and confirm
 
    如果出现 Open Anyway（仍要打开）选项，请点击并确认
 
-Method 2: Use Terminal
+Alternatively, if you trust the source and have reviewed the script, you can launch it through Terminal
 
-方法二：使用终端
+如果你信任该项目的来源并且已经检查过脚本，也可以通过终端启动
 
 1. Open Terminal
 
    打开终端
 
-2. Type `cd `, including the space after `cd`
+2. Type `cd `, including the space
 
    输入 `cd `，注意 `cd` 后面需要有一个空格
 
-3. Drag the extracted project folder into the Terminal window and press Enter
+3. Drag the extracted project folder into Terminal and press Enter
 
-   将解压后的项目文件夹拖入终端窗口，然后按 Enter 键
+   将解压后的项目文件夹拖入终端，然后按 Enter 键
 
 4. Run these commands
 
@@ -111,7 +105,7 @@ Method 2: Use Terminal
    ./start.command
    ```
 
-Only run scripts you trust. Review `start.command` before executing it if you are unsure what it does
+Only run scripts you trust. Review `start.command` before executing it if you're unsure what it does
 
 请只运行你信任的脚本。如果不确定 `start.command` 的作用，请在执行前检查其内容
 
@@ -119,35 +113,41 @@ Only run scripts you trust. Review `start.command` before executing it if you ar
 
 ### Windows 系统
 
-1. Download the project ZIP from the [GitHub repository](../../archive/refs/heads/main.zip)
+1. Download the project ZIP from the [GitHub repository](https://github.com/alanl16/ElectronMinecraftModChecker/archive/refs/heads/main.zip)
 
-   从 [GitHub 仓库](../../archive/refs/heads/main.zip) 下载项目 ZIP 压缩包
+   从 [GitHub 仓库](https://github.com/alanl16/ElectronMinecraftModChecker/archive/refs/heads/main.zip) 下载项目 ZIP 压缩包
 
 2. Extract the ZIP file
 
    解压 ZIP 文件
 
-3. Open the extracted project folder
+3. Open the extracted folder
 
-   打开解压后的项目文件夹
+   打开解压后的文件夹
 
 4. Double-click `start.bat` to launch ElectronModChecker
 
    双击 `start.bat` 启动电子模组版本检查器
 
-If Windows displays a security warning, verify that you trust the source and understand what the script does before proceeding
+If Windows displays a security warning, verify that you trust the source before proceeding
 
-如果 Windows 显示安全警告，请在继续操作前确认你信任该文件的来源，并了解脚本的作用
+如果 Windows 显示安全警告，请在继续操作前确认你信任该文件的来源
+
+### Linux
+
+Linux support is currently in development
+
+Linux 支持目前正在开发中
 
 ## Supported Mod Platforms（支持的模组平台）
 
-- [Modrinth](https://modrinth.com/) — A platform for discovering and downloading Minecraft mods
+- [Modrinth](https://modrinth.com/)
 
-  [Modrinth](https://modrinth.com/) — 一个用于查找和下载 Minecraft 模组的平台
+  一个用于查找和下载 Minecraft 模组的平台
 
-- [CurseForge](https://www.curseforge.com/minecraft) — A platform offering Minecraft mods and other gaming content
+- [CurseForge](https://www.curseforge.com/minecraft)
 
-  [CurseForge](https://www.curseforge.com/minecraft) — 一个提供 Minecraft 模组及其他游戏内容的平台
+  一个提供 Minecraft 模组及其他游戏内容的平台
 
 ## Important Notes（重要说明）
 
@@ -163,21 +163,17 @@ If Windows displays a security warning, verify that you trust the source and und
 
   部分模组可能只在其中一个平台上发布
 
-- Always download mods from trusted sources
+## Feedback & Contributions（反馈与贡献）
 
-  请始终从可信来源下载模组
-
-## Feedback and Contributions（反馈与贡献）
-
-Found a bug or have an idea for improvement? Feel free to open an issue on GitHub
+Found a bug or have an idea for improvement? Open an issue on GitHub
 
 如果你发现了错误或有改进建议，欢迎在 GitHub 上提交 Issue
 
 ## License（许可证）
 
-This project is protected by a custom license. Please read the [LICENSE](LICENSE) file for the terms governing its use. Permission from the copyright holder is required for uses covered by that license
+See [LICENSE](https://github.com/alanl16/ElectronMinecraftModChecker/blob/main/LICENSE) for the terms governing use of this project. Permission may be required before using, copying, modifying, or distributing it
 
-本项目受自定义许可证保护。请阅读 [LICENSE](LICENSE) 文件以了解具体使用条款。对于该许可证所涵盖的使用行为，必须事先获得版权所有者的许可
+请阅读 [LICENSE](https://github.com/alanl16/ElectronMinecraftModChecker/blob/main/LICENSE) 以了解本项目的使用条款。在使用、复制、修改或分发本项目之前，可能需要获得许可
 
 ## Contact（联系方式）
 
@@ -193,6 +189,6 @@ For permission requests, contact me through GitHub, Discord, or QQ
 
 ---
 
-ElectronModChecker — Check your mods. Choose your Minecraft version
+**ElectronModChecker** — Check your mods. Choose your Minecraft version
 
-电子模组版本检查器 — 检查你的模组，选择你想玩的 Minecraft 版本
+**电子模组版本检查器** — 检查你的模组，选择你想玩的 Minecraft 版本
